@@ -674,11 +674,34 @@ function handleSearch() {
 }
 
 // ============================================================
+// CSV PARSER (handles quoted fields with commas)
+// ============================================================
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"' && line[i+1] === '"') { current += '"'; i++; }
+      else if (ch === '"') { inQuotes = false; }
+      else { current += ch; }
+    } else {
+      if (ch === '"') { inQuotes = true; }
+      else if (ch === ',') { result.push(current.trim()); current = ''; }
+      else { current += ch; }
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+// ============================================================
 // SYNC
 // ============================================================
 async function syncData() {
   if (!CSV_URL) {
-    document.getElementById('syncStatus').textContent = 'URL CSV não configurada';
+    document.getElementById('syncStatus').textContent = 'URL CSV nao configurada';
     setTimeout(() => document.getElementById('syncStatus').textContent = '', 3000);
     return;
   }
@@ -686,17 +709,23 @@ async function syncData() {
   btn.textContent = 'Sincronizando...';
   btn.disabled = true;
   try {
-    const res = await fetch(CSV_URL, {signal: AbortSignal.timeout(8000)});
+    const res = await fetch(CSV_URL, {signal: AbortSignal.timeout(10000)});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
     const lines = text.split('\n').filter(l => l.trim());
+    if (lines.length < 2) throw new Error('CSV vazio');
     const records = [];
     for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(',');
-      if (cols.length < 8) continue;
+      const cols = parseCSVLine(lines[i]);
+      if (cols.length < 7) continue;
+      const id = (cols[0]||'').trim();
+      const chamado = (cols[1]||'').trim();
+      const assunto = (cols[2]||'').trim();
+      if (!chamado && !assunto) continue;
       records.push({
-        id: (cols[0]||'').trim(),
-        chamado: (cols[1]||'').trim(),
-        assunto: (cols[2]||'').trim(),
+        id: id,
+        chamado: chamado,
+        assunto: assunto,
         data_ticket: (cols[3]||'').trim(),
         status: (cols[4]||'').trim(),
         equipe: (cols[5]||'').trim(),
@@ -710,8 +739,11 @@ async function syncData() {
       ALL_RECORDS = records;
       updateDashboard();
       document.getElementById('syncStatus').textContent = `Atualizado - Gestão Online (${records.length} registros)`;
+    } else {
+      document.getElementById('syncStatus').textContent = 'Nenhum registro encontrado no CSV';
     }
   } catch(e) {
+    console.error('Sync error:', e);
     document.getElementById('syncStatus').textContent = 'Usando dados locais';
   }
   btn.textContent = 'Sincronizar';
@@ -719,8 +751,9 @@ async function syncData() {
   setTimeout(() => document.getElementById('syncStatus').textContent = '', 4000);
 }
 
-// INIT
+// INIT - auto sync on load
 updateDashboard();
+syncData();
 </script>
 </body>
 </html>
