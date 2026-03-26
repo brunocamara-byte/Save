@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Save ID - Painel Executivo de Projetos</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F6FA;
+  --surface: #FFFFFF;
+  --surface-hover: #FAFBFC;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --border: #E2E8F0;
+  --border-light: #F1F5F9;
+  --accent: #1E3A5F;
+  --accent-light: #2D5F8B;
+  --accent-soft: #EBF2FA;
+  --green: #059669;
+  --green-soft: #ECFDF5;
+  --green-border: #A7F3D0;
+  --yellow: #D97706;
+  --yellow-soft: #FFFBEB;
+  --red: #DC2626;
+  --red-soft: #FEF2F2;
+  --blue: #2563EB;
+  --blue-soft: #EFF6FF;
+  --purple: #7C3AED;
+  --purple-soft: #F5F3FF;
+  --gray: #64748B;
+  --gray-soft: #F8FAFC;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 12px rgba(15,23,42,0.06);
+  --shadow-lg: 0 8px 24px rgba(15,23,42,0.08);
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text-primary); min-height:100vh; }
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #0F2A44 0%, #1E3A5F 50%, #2D5F8B 100%);
+  padding: 20px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(15,23,42,0.12);
+}
+.header-left h1 {
+  font-family:'Sora',sans-serif; font-size:20px; font-weight:700; color:#FFF; letter-spacing:-0.3px;
+}
+.header-left p {
+  font-size:12px; color:rgba(255,255,255,0.6); margin-top:2px; font-weight:400;
+}
+.header-right { display:flex; align-items:center; gap:12px; }
+.btn-sync {
+  background: rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2);
+  color:#FFF; padding:8px 16px; border-radius:var(--radius-sm); cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500;
+  transition: all 0.2s;
+}
+.btn-sync:hover { background: rgba(255,255,255,0.2); }
+.sync-status { font-size:11px; color:rgba(255,255,255,0.5); }
+
+/* FILTERS */
+.filters-bar {
+  background: var(--surface); border-bottom:1px solid var(--border);
+  padding: 14px 32px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+}
+.filter-group { display:flex; align-items:center; gap:6px; }
+.filter-group label { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
+.filter-group select, .filter-group input {
+  padding:7px 12px; border:1px solid var(--border); border-radius:var(--radius-sm);
+  font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text-primary);
+  background:var(--surface); outline:none; transition:border 0.2s;
+}
+.filter-group select:focus, .filter-group input:focus { border-color:var(--accent); }
+.search-input { width:220px; }
+.search-count { font-size:11px; color:var(--accent); font-weight:500; }
+
+/* NAV TABS */
+.nav-tabs {
+  display:flex; gap:0; background:var(--surface); border-bottom:2px solid var(--border);
+  padding: 0 32px;
+}
+.nav-tab {
+  padding:12px 24px; font-size:13px; font-weight:600; color:var(--text-muted);
+  cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px;
+  transition: all 0.2s; user-select:none;
+}
+.nav-tab:hover { color:var(--text-primary); }
+.nav-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* CONTENT */
+.content { padding:24px 32px; max-width:1400px; margin:0 auto; }
+.tab-content { display:none; }
+.tab-content.active { display:block; animation: fadeUp 0.3s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* KPI CARDS */
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.kpi-card {
+  background:var(--surface); border-radius:var(--radius); padding:20px;
+  border:1px solid var(--border); box-shadow:var(--shadow-sm);
+}
+.kpi-card .kpi-label { font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
+.kpi-card .kpi-value { font-family:'Sora',sans-serif; font-size:28px; font-weight:700; color:var(--text-primary); margin-top:4px; }
+.kpi-card .kpi-sub { font-size:12px; color:var(--text-muted); margin-top:2px; }
+.kpi-card.green { border-left:3px solid var(--green); }
+.kpi-card.blue { border-left:3px solid var(--blue); }
+.kpi-card.red { border-left:3px solid var(--red); }
+.kpi-card.purple { border-left:3px solid var(--purple); }
+
+/* KANBAN */
+.kanban-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+.kanban-col { min-height:200px; }
+.kanban-col-header {
+  padding:10px 12px; border-radius:var(--radius-sm) var(--radius-sm) 0 0;
+  font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.kanban-col-header .count {
+  background:rgba(255,255,255,0.3); padding:2px 8px; border-radius:10px; font-size:11px;
+}
+.kanban-cards { padding:8px; background:var(--surface); border:1px solid var(--border); border-top:none; border-radius:0 0 var(--radius-sm) var(--radius-sm); min-height:120px; }
+.kanban-card {
+  padding:10px 12px; margin-bottom:8px; border-radius:var(--radius-sm);
+  border-left:3px solid; transition:transform 0.15s, box-shadow 0.15s; cursor:default;
+}
+.kanban-card:hover { transform:translateY(-1px); box-shadow:var(--shadow-md); }
+.kanban-card .card-chamado { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:500; }
+.kanban-card .card-assunto { font-size:11px; color:var(--text-secondary); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.kanban-card .card-meta { font-size:10px; color:var(--text-muted); margin-top:4px; display:flex; justify-content:space-between; }
+
+/* Status colors */
+.status-backlog { background:var(--gray-soft); border-color:var(--gray); }
+.status-backlog .card-chamado { color:var(--gray); }
+.status-analise { background:#F0F7FF; border-color:#5B9BD5; }
+.status-analise .card-chamado { color:#5B9BD5; }
+.status-aprovacao { background:var(--yellow-soft); border-color:var(--yellow); }
+.status-aprovacao .card-chamado { color:var(--yellow); }
+.status-execucao { background:var(--blue-soft); border-color:var(--blue); }
+.status-execucao .card-chamado { color:var(--blue); }
+.status-bloqueada { background:var(--red-soft); border-color:var(--red); }
+.status-bloqueada .card-chamado { color:var(--red); }
+.status-concluida { background:var(--green-soft); border-color:var(--green); }
+.status-concluida .card-chamado { color:var(--green); }
+
+.col-backlog .kanban-col-header { background:var(--gray); color:#FFF; }
+.col-analise .kanban-col-header { background:#5B9BD5; color:#FFF; }
+.col-aprovacao .kanban-col-header { background:var(--yellow); color:#FFF; }
+.col-execucao .kanban-col-header { background:var(--blue); color:#FFF; }
+.col-bloqueada .kanban-col-header { background:var(--red); color:#FFF; }
+.col-concluida .kanban-col-header { background:var(--green); color:#FFF; }
+
+/* TABLE */
+.data-table { width:100%; border-collapse:collapse; background:var(--surface); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-sm); border:1px solid var(--border); }
+.data-table thead th {
+  background:var(--accent); color:#FFF; padding:12px 14px; font-size:11px;
+  font-weight:600; text-transform:uppercase; letter-spacing:0.5px; text-align:left;
+  position:sticky; top:0; z-index:2;
+}
+.data-table tbody td { padding:10px 14px; font-size:13px; border-bottom:1px solid var(--border-light); }
+.data-table tbody tr:hover { background:var(--surface-hover); }
+.data-table tbody tr.highlight { background:#FFF9DB; }
+.status-pill {
+  display:inline-block; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600;
+}
+.pill-backlog { background:var(--gray-soft); color:var(--gray); }
+.pill-analise { background:#E8F0FE; color:#4A6B8A; }
+.pill-aprovacao { background:var(--yellow-soft); color:var(--yellow); }
+.pill-execucao { background:var(--blue-soft); color:var(--blue); }
+.pill-bloqueada { background:var(--red-soft); color:var(--red); }
+.pill-concluida { background:var(--green-soft); color:var(--green); }
+
+/* FATURAMENTO */
+.fat-section { margin-bottom:28px; }
+.fat-section-title {
+  font-family:'Sora',sans-serif; font-size:15px; font-weight:700; color:var(--text-primary);
+  margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid var(--border);
+}
+.fat-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px; }
+.fat-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:16px; text-align:center; box-shadow:var(--shadow-sm);
+}
+.fat-card .fc-label { font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; }
+.fat-card .fc-value { font-family:'Sora',sans-serif; font-size:22px; font-weight:700; margin-top:4px; }
+.fat-card.fc-green .fc-value { color:var(--green); }
+.fat-card.fc-red .fc-value { color:var(--red); }
+.fat-card.fc-blue .fc-value { color:var(--accent); }
+.progress-bar { height:6px; background:var(--border); border-radius:3px; margin-top:8px; overflow:hidden; }
+.progress-bar .fill { height:100%; border-radius:3px; transition:width 0.4s; }
+
+/* RELATORIOS */
+.rel-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.rel-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow-sm); }
+.rel-card h3 { font-family:'Sora',sans-serif; font-size:14px; font-weight:700; margin-bottom:14px; color:var(--accent); }
+.rel-table { width:100%; border-collapse:collapse; }
+.rel-table th { background:var(--accent-soft); padding:8px 10px; font-size:11px; font-weight:600; color:var(--accent); text-align:left; }
+.rel-table td { padding:8px 10px; font-size:13px; border-bottom:1px solid var(--border-light); }
+.rel-table tr:last-child td { font-weight:700; border-top:2px solid var(--border); }
+
+/* INFO BOX */
+.info-box {
+  background:var(--blue-soft); border:1px solid #BFDBFE; border-radius:var(--radius-sm);
+  padding:12px 16px; font-size:12px; color:#1E40AF; margin-top:16px; line-height:1.5;
+}
+.warning-box {
+  background:var(--yellow-soft); border:1px solid #FDE68A; border-radius:var(--radius-sm);
+  padding:14px 18px; font-size:13px; color:#92400E; text-align:center; margin-bottom:20px;
+}
+
+/* FOOTER */
+.footer {
+  text-align:center; padding:20px 32px; font-size:11px; color:var(--text-muted);
+  border-top:1px solid var(--border); margin-top:40px;
+}
+
+/* RESPONSIVE */
+@media(max-width:1200px) { .kanban-grid { grid-template-columns:repeat(3,1fr); } }
+@media(max-width:900px) {
+  .kanban-grid { grid-template-columns:repeat(2,1fr); }
+  .kpi-row { grid-template-columns:repeat(2,1fr); }
+  .filters-bar { flex-direction:column; align-items:flex-start; }
+  .fat-cards { grid-template-columns:repeat(2,1fr); }
+  .rel-grid { grid-template-columns:1fr; }
+}
+@media(max-width:600px) {
+  .kanban-grid { grid-template-columns:1fr; }
+  .kpi-row { grid-template-columns:1fr; }
+  .content { padding:16px; }
+  .header { padding:16px; }
+  .filters-bar { padding:12px 16px; }
+  .nav-tabs { padding:0 16px; }
+  .fat-cards { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Save ID - Painel Executivo de Projetos</h1>
+    <p>Gestão estratégica de demandas e entregas - Gestão Online</p>
+  </div>
+  <div class="header-right">
+    <span class="sync-status" id="syncStatus"></span>
+    <button class="btn-sync" id="btnSync" onclick="syncData()">Sincronizar</button>
+  </div>
+</div>
+
+<div class="filters-bar">
+  <div class="filter-group">
+    <label>Ano</label>
+    <select id="filterAno" onchange="updateDashboard()">
+      <option value="">Selecione o ano</option>
+      <option value="2026" selected>2026</option>
+      <option value="2027">2027</option>
+      <option value="2028">2028</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Projeto</label>
+    <select id="filterProjeto" onchange="updateDashboard()">
+      <option value="all">Todos</option>
+      <option value="Geral - Grupo Save">Geral - Grupo Save</option>
+      <option value="Projetos Avulsos">Projetos Avulsos</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Mês</label>
+    <select id="filterMes" onchange="updateDashboard()">
+      <option value="all">Todos</option>
+      <option value="1">Janeiro</option><option value="2">Fevereiro</option>
+      <option value="3" selected>Março</option><option value="4">Abril</option>
+      <option value="5">Maio</option><option value="6">Junho</option>
+      <option value="7">Julho</option><option value="8">Agosto</option>
+      <option value="9">Setembro</option><option value="10">Outubro</option>
+      <option value="11">Novembro</option><option value="12">Dezembro</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Busca</label>
+    <input type="text" class="search-input" id="searchInput" placeholder="Chamado ou assunto..." oninput="handleSearch()">
+    <span class="search-count" id="searchCount"></span>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" data-tab="kanban" onclick="switchTab('kanban')">Kanban</div>
+  <div class="nav-tab" data-tab="pipeline" onclick="switchTab('pipeline')">Pipeline</div>
+  <div class="nav-tab" data-tab="relatorios" onclick="switchTab('relatorios')">Relatórios</div>
+  <div class="nav-tab" data-tab="faturamento" onclick="switchTab('faturamento')">Faturamento</div>
+</div>
+
+<div class="content">
+  <div id="warningBox" class="warning-box" style="display:none;">Selecione um ano para visualizar os dados</div>
+
+  <!-- KANBAN -->
+  <div class="tab-content active" id="tab-kanban">
+    <div class="kpi-row" id="kpiRow"></div>
+    <div class="kanban-grid" id="kanbanGrid"></div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div class="tab-content" id="tab-pipeline">
+    <div class="kpi-row" id="kpiRow2"></div>
+    <div style="overflow-x:auto;">
+      <table class="data-table" id="pipelineTable">
+        <thead>
+          <tr>
+            <th>Chamado</th><th>Data</th><th>Assunto</th><th>Status</th>
+            <th>Projeto</th><th>Horas Estimadas</th><th>Equipe GO</th>
+          </tr>
+        </thead>
+        <tbody id="pipelineBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RELATORIOS -->
+  <div class="tab-content" id="tab-relatorios">
+    <div class="kpi-row" id="kpiRow3"></div>
+    <div class="rel-grid" id="relGrid"></div>
+  </div>
+
+  <!-- FATURAMENTO -->
+  <div class="tab-content" id="tab-faturamento">
+    <div id="fatContent"></div>
+    <div class="info-box">
+      As horas faturadas podem diferir das estimadas inicialmente. Durante a execução dos projetos, ajustes técnicos e mudanças na trajetória das demandas podem impactar o tempo real de entrega.
+    </div>
+    <div class="info-box" style="background:var(--green-soft);border-color:var(--green-border);color:#065F46;margin-top:8px;">
+      Horas não utilizadas no mês não acumulam para o período seguinte. Horas excedentes (acima de 40h) são faturadas separadamente conforme contrato.
+    </div>
+  </div>
+</div>
+
+<div class="footer">© Gestão Online Soluções em TI LTDA. Todos os direitos reservados.</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const CSV_URL = '';
+let ALL_RECORDS = [
+  {id:"SAV-0001",chamado:"#1001",assunto:"Ajuste no layout da pagina de parceiros",data_ticket:"2026-03-05",status:"Concluida",equipe:"Matheus",projeto:"Geral - Grupo Save",hrs_est:4,hrs_real:3.5,data_conc:"2026-03-10"},
+  {id:"SAV-0002",chamado:"#1002",assunto:"Correcao de bug no formulario de cadastro",data_ticket:"2026-03-06",status:"Concluida",equipe:"Felipe",projeto:"Geral - Grupo Save",hrs_est:2,hrs_real:2,data_conc:"2026-03-08"},
+  {id:"SAV-0003",chamado:"#1003",assunto:"Implementacao de dashboard de vendas parceiros",data_ticket:"2026-03-07",status:"Execucao",equipe:"Daniel Torres",projeto:"Projetos Avulsos",hrs_est:20,hrs_real:12,data_conc:""},
+  {id:"SAV-0004",chamado:"#1004",assunto:"Melhorias no fluxo de emissao de certificado",data_ticket:"2026-03-10",status:"Execucao",equipe:"Luan",projeto:"Geral - Grupo Save",hrs_est:8,hrs_real:5,data_conc:""},
+  {id:"SAV-0005",chamado:"#1005",assunto:"Integracao API parceiros com sistema interno",data_ticket:"2026-03-12",status:"Bloqueada",equipe:"Renan Nunes",projeto:"Geral - Grupo Save",hrs_est:6,hrs_real:0,data_conc:""},
+  {id:"SAV-0006",chamado:"#1006",assunto:"Criacao de relatorio de comissoes automatico",data_ticket:"2026-03-14",status:"Analise Tecnica",equipe:"Paulo",projeto:"Geral - Grupo Save",hrs_est:5,hrs_real:0,data_conc:""},
+  {id:"SAV-0007",chamado:"#1007",assunto:"Atualizacao da pagina institucional Save ID",data_ticket:"2026-03-15",status:"Ag. Aprovacao Save",equipe:"Matheus",projeto:"Geral - Grupo Save",hrs_est:3,hrs_real:0,data_conc:""},
+  {id:"SAV-0008",chamado:"#1008",assunto:"Configuracao de ambiente de staging",data_ticket:"2026-03-18",status:"Backlog",equipe:"Luanna",projeto:"Geral - Grupo Save",hrs_est:4,hrs_real:0,data_conc:""}
+];
+
+const STAGES = [
+  {key:"Backlog",label:"Backlog",cls:"backlog"},
+  {key:"Analise Tecnica",label:"Análise Técnica",cls:"analise"},
+  {key:"Ag. Aprovacao Save",label:"Ag. Aprovação",cls:"aprovacao"},
+  {key:"Execucao",label:"Execução",cls:"execucao"},
+  {key:"Bloqueada",label:"Bloqueada",cls:"bloqueada"},
+  {key:"Concluida",label:"Concluída",cls:"concluida"}
+];
+
+const MESES = ["","Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+// ============================================================
+// FILTERS
+// ============================================================
+function getFiltered() {
+  const ano = document.getElementById('filterAno').value;
+  const proj = document.getElementById('filterProjeto').value;
+  const mes = document.getElementById('filterMes').value;
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+  if (!ano) return [];
+
+  return ALL_RECORDS.filter(r => {
+    const d = new Date(r.data_ticket);
+    if (d.getFullYear() !== parseInt(ano)) return false;
+    if (proj !== 'all' && r.projeto !== proj) return false;
+    if (mes !== 'all' && (d.getMonth()+1) !== parseInt(mes)) return false;
+    if (search && !r.chamado.toLowerCase().includes(search) && !r.assunto.toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
+// ============================================================
+// KPIs
+// ============================================================
+function renderKPIs(containerId, data) {
+  const total = data.length;
+  const conc = data.filter(r => r.status === 'Concluida').length;
+  const exec = data.filter(r => r.status === 'Execucao').length;
+  const bloq = data.filter(r => r.status === 'Bloqueada').length;
+  document.getElementById(containerId).innerHTML = `
+    <div class="kpi-card blue"><div class="kpi-label">Total Demandas</div><div class="kpi-value">${total}</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Concluídas</div><div class="kpi-value">${conc}</div></div>
+    <div class="kpi-card purple"><div class="kpi-label">Em Execução</div><div class="kpi-value">${exec}</div></div>
+    <div class="kpi-card red"><div class="kpi-label">Bloqueadas</div><div class="kpi-value">${bloq}</div></div>
+  `;
+}
+
+// ============================================================
+// KANBAN
+// ============================================================
+function renderKanban(data) {
+  const grid = document.getElementById('kanbanGrid');
+  grid.innerHTML = STAGES.map(s => {
+    const items = data.filter(r => r.status === s.key);
+    const cards = items.map(r => `
+      <div class="kanban-card status-${s.cls}">
+        <div class="card-chamado">${r.chamado}</div>
+        <div class="card-assunto">${r.assunto}</div>
+        <div class="card-meta"><span>${r.projeto}</span><span>${r.equipe}</span></div>
+        ${r.hrs_est ? `<div class="card-meta" style="margin-top:2px"><span>${r.hrs_est}h est.</span></div>` : ''}
+      </div>
+    `).join('');
+    return `
+      <div class="kanban-col col-${s.cls}">
+        <div class="kanban-col-header">${s.label}<span class="count">${items.length}</span></div>
+        <div class="kanban-cards">${cards || '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px;">Nenhum</div>'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// PIPELINE
+// ============================================================
+function renderPipeline(data) {
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  const body = document.getElementById('pipelineBody');
+  body.innerHTML = data.map(r => {
+    const hl = search && (r.chamado.toLowerCase().includes(search) || r.assunto.toLowerCase().includes(search));
+    const pillCls = 'pill-' + STAGES.find(s => s.key === r.status)?.cls || '';
+    const dt = r.data_ticket ? new Date(r.data_ticket).toLocaleDateString('pt-BR') : '-';
+    return `<tr class="${hl ? 'highlight' : ''}">
+      <td><span style="font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--accent)">${r.chamado}</span></td>
+      <td>${dt}</td>
+      <td>${r.assunto}</td>
+      <td><span class="status-pill ${pillCls}">${r.status}</span></td>
+      <td>${r.projeto}</td>
+      <td style="text-align:center">${r.hrs_est || '-'}</td>
+      <td>${r.equipe}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ============================================================
+// RELATORIOS
+// ============================================================
+function renderRelatorios(data) {
+  const ano = document.getElementById('filterAno').value;
+  const mes = document.getElementById('filterMes').value;
+  const periodo = mes !== 'all' ? `${MESES[parseInt(mes)]} / ${ano}` : `Todos os meses / ${ano}`;
+
+  // Monthly breakdown
+  const monthly = {};
+  for (let m = 1; m <= 12; m++) monthly[m] = {dem:0, hrs:0, conc:0, bloq:0};
+  const allYear = ALL_RECORDS.filter(r => new Date(r.data_ticket).getFullYear() === parseInt(ano));
+  allYear.forEach(r => {
+    const m = new Date(r.data_ticket).getMonth() + 1;
+    monthly[m].dem++;
+    monthly[m].hrs += (r.hrs_est || 0);
+    if (r.status === 'Concluida') monthly[m].conc++;
+    if (r.status === 'Bloqueada') monthly[m].bloq++;
+  });
+
+  let monthRows = '';
+  let tDem=0,tHrs=0,tConc=0,tBloq=0;
+  for (let m = 1; m <= 12; m++) {
+    const d = monthly[m];
+    tDem+=d.dem; tHrs+=d.hrs; tConc+=d.conc; tBloq+=d.bloq;
+    if (d.dem > 0) monthRows += `<tr><td>${MESES[m]}</td><td>${d.dem}</td><td>${d.hrs}</td><td>${d.conc}</td><td>${d.bloq}</td></tr>`;
+  }
+  monthRows += `<tr><td>Total</td><td>${tDem}</td><td>${tHrs}</td><td>${tConc}</td><td>${tBloq}</td></tr>`;
+
+  // By project
+  const byProj = {};
+  allYear.forEach(r => {
+    if (!byProj[r.projeto]) byProj[r.projeto] = {dem:0,hrs:0,conc:0};
+    byProj[r.projeto].dem++;
+    byProj[r.projeto].hrs += (r.hrs_est||0);
+    if (r.status === 'Concluida') byProj[r.projeto].conc++;
+  });
+  let projRows = '';
+  let pDem=0,pHrs=0,pConc=0;
+  Object.entries(byProj).forEach(([p,d]) => {
+    pDem+=d.dem; pHrs+=d.hrs; pConc+=d.conc;
+    projRows += `<tr><td>${p}</td><td>${d.dem}</td><td>${d.hrs}</td><td>${d.conc}</td></tr>`;
+  });
+  projRows += `<tr><td>Total</td><td>${pDem}</td><td>${pHrs}</td><td>${pConc}</td></tr>`;
+
+  document.getElementById('relGrid').innerHTML = `
+    <div class="rel-card">
+      <h3>Relatório por Projeto - ${periodo}</h3>
+      <table class="rel-table">
+        <thead><tr><th>Mês</th><th>Demandas</th><th>Horas</th><th>Concluídas</th><th>Bloqueadas</th></tr></thead>
+        <tbody>${monthRows}</tbody>
+      </table>
+    </div>
+    <div class="rel-card">
+      <h3>Comparativo por Projeto - ${ano}</h3>
+      <table class="rel-table">
+        <thead><tr><th>Projeto</th><th>Demandas</th><th>Horas</th><th>Concluídas</th></tr></thead>
+        <tbody>${projRows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============================================================
+// FATURAMENTO
+// ============================================================
+function renderFaturamento(data) {
+  const mes = document.getElementById('filterMes').value;
+  const ano = document.getElementById('filterAno').value;
+  const isMesEspecifico = mes !== 'all';
+
+  // Faturáveis: Concluida + data_conc preenchida + data_conc no mes/ano
+  const faturaveis = ALL_RECORDS.filter(r => {
+    if (r.status !== 'Concluida' || !r.data_conc) return false;
+    const dc = new Date(r.data_conc);
+    if (dc.getFullYear() !== parseInt(ano)) return false;
+    if (isMesEspecifico && (dc.getMonth()+1) !== parseInt(mes)) return false;
+    return true;
+  });
+
+  const geralItems = faturaveis.filter(r => r.projeto === 'Geral - Grupo Save');
+  const avulsoItems = faturaveis.filter(r => r.projeto === 'Projetos Avulsos');
+  const geralHoras = geralItems.reduce((s,r) => s + (r.hrs_real || r.hrs_est || 0), 0);
+  const avulsoHoras = avulsoItems.reduce((s,r) => s + (r.hrs_real || r.hrs_est || 0), 0);
+
+  let geralCards = '';
+  if (isMesEspecifico) {
+    const limite = 40;
+    const rest = Math.max(0, limite - geralHoras);
+    const exc = Math.max(0, geralHoras - limite);
+    const pct = Math.min(100, (geralHoras / limite) * 100);
+    const barColor = pct >= 100 ? 'var(--red)' : pct >= 80 ? 'var(--yellow)' : 'var(--green)';
+    geralCards = `
+      <div class="fat-card fc-blue"><div class="fc-label">Demandas</div><div class="fc-value">${geralItems.length}</div></div>
+      <div class="fat-card"><div class="fc-label">Contrato</div><div class="fc-value">${limite}h</div></div>
+      <div class="fat-card ${geralHoras > limite ? 'fc-red' : 'fc-green'}"><div class="fc-label">Horas Faturadas</div><div class="fc-value">${geralHoras}h</div>
+        <div class="progress-bar"><div class="fill" style="width:${pct}%;background:${barColor}"></div></div>
+      </div>
+      ${exc > 0
+        ? `<div class="fat-card fc-red"><div class="fc-label">Acima do contrato de 40h</div><div class="fc-value">+${exc}h</div></div>`
+        : `<div class="fat-card fc-green"><div class="fc-label">Horas Restantes</div><div class="fc-value">${rest}h</div></div>`
+      }
+    `;
+  } else {
+    geralCards = `
+      <div class="fat-card fc-blue"><div class="fc-label">Demandas</div><div class="fc-value">${geralItems.length}</div></div>
+      <div class="fat-card"><div class="fc-label">Contrato Mensal</div><div class="fc-value">40h</div></div>
+      <div class="fat-card fc-blue"><div class="fc-label">Horas Faturadas</div><div class="fc-value">${geralHoras}h</div><div class="fc-label" style="margin-top:4px">no período</div></div>
+      <div class="fat-card"><div class="fc-label">Concluídas</div><div class="fc-value">${geralItems.length}</div></div>
+    `;
+  }
+
+  const geralTable = geralItems.length > 0 ? `<table class="data-table" style="margin-top:12px">
+    <thead><tr><th>Chamado</th><th>Assunto</th><th>Projeto</th><th>Data Ticket</th><th>Data Conclusão</th><th>Horas Faturadas</th><th>Status</th></tr></thead>
+    <tbody>${geralItems.map(r => {
+      const dt = r.data_ticket ? new Date(r.data_ticket).toLocaleDateString('pt-BR') : '-';
+      const dc = r.data_conc ? new Date(r.data_conc).toLocaleDateString('pt-BR') : '-';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-weight:500">${r.chamado}</td><td>${r.assunto}</td><td>${r.projeto}</td><td>${dt}</td><td style="color:var(--green)">${dc}</td><td style="text-align:center;color:var(--green);font-weight:600">${r.hrs_real || r.hrs_est || 0}h</td><td><span class="status-pill pill-concluida">Concluída</span></td></tr>`;
+    }).join('')}</tbody>
+  </table>` : '<p style="color:var(--text-muted);font-size:13px;margin-top:12px;">Nenhum chamado faturável neste período.</p>';
+
+  const avulsoTable = avulsoItems.length > 0 ? `<table class="data-table" style="margin-top:12px">
+    <thead><tr><th>Chamado</th><th>Assunto</th><th>Data Conclusão</th><th>Horas Faturadas</th></tr></thead>
+    <tbody>${avulsoItems.map(r => {
+      const dc = r.data_conc ? new Date(r.data_conc).toLocaleDateString('pt-BR') : '-';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace">${r.chamado}</td><td>${r.assunto}</td><td>${dc}</td><td style="text-align:center;font-weight:600">${r.hrs_real || r.hrs_est || 0}h</td></tr>`;
+    }).join('')}</tbody>
+  </table>` : '<p style="color:var(--text-muted);font-size:13px;margin-top:12px;">Nenhum projeto avulso faturado neste período.</p>';
+
+  document.getElementById('fatContent').innerHTML = `
+    <div class="fat-section">
+      <div class="fat-section-title" style="color:var(--accent)">Geral - Grupo Save (Contrato 40h/mês)</div>
+      <div class="fat-cards">${geralCards}</div>
+      ${geralTable}
+    </div>
+    <div class="fat-section">
+      <div class="fat-section-title" style="color:var(--purple)">Projetos Avulsos (faturamento separado)</div>
+      <div class="fat-cards">
+        <div class="fat-card fc-blue"><div class="fc-label">Demandas</div><div class="fc-value">${avulsoItems.length}</div></div>
+        <div class="fat-card"><div class="fc-label">Horas Faturadas</div><div class="fc-value">${avulsoHoras}h</div></div>
+      </div>
+      ${avulsoTable}
+    </div>
+  `;
+}
+
+// ============================================================
+// UPDATE
+// ============================================================
+function updateDashboard() {
+  const ano = document.getElementById('filterAno').value;
+  const warn = document.getElementById('warningBox');
+  if (!ano) {
+    warn.style.display = 'block';
+    ['kpiRow','kpiRow2','kpiRow3'].forEach(id => document.getElementById(id).innerHTML = '');
+    document.getElementById('kanbanGrid').innerHTML = '';
+    document.getElementById('pipelineBody').innerHTML = '';
+    document.getElementById('relGrid').innerHTML = '';
+    document.getElementById('fatContent').innerHTML = '';
+    return;
+  }
+  warn.style.display = 'none';
+  const data = getFiltered();
+  renderKPIs('kpiRow', data);
+  renderKPIs('kpiRow2', data);
+  renderKPIs('kpiRow3', data);
+  renderKanban(data);
+  renderPipeline(data);
+  renderRelatorios(data);
+  renderFaturamento(data);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+function handleSearch() {
+  const val = document.getElementById('searchInput').value.trim();
+  if (val.length > 0) switchTab('pipeline');
+  updateDashboard();
+  const data = getFiltered();
+  const count = data.length;
+  document.getElementById('searchCount').textContent = val ? `${count} resultados` : '';
+}
+
+// ============================================================
+// SYNC
+// ============================================================
+async function syncData() {
+  if (!CSV_URL) {
+    document.getElementById('syncStatus').textContent = 'URL CSV não configurada';
+    setTimeout(() => document.getElementById('syncStatus').textContent = '', 3000);
+    return;
+  }
+  const btn = document.getElementById('btnSync');
+  btn.textContent = 'Sincronizando...';
+  btn.disabled = true;
+  try {
+    const res = await fetch(CSV_URL, {signal: AbortSignal.timeout(8000)});
+    const text = await res.text();
+    const lines = text.split('\n').filter(l => l.trim());
+    const records = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      if (cols.length < 8) continue;
+      records.push({
+        id: (cols[0]||'').trim(),
+        chamado: (cols[1]||'').trim(),
+        assunto: (cols[2]||'').trim(),
+        data_ticket: (cols[3]||'').trim(),
+        status: (cols[4]||'').trim(),
+        equipe: (cols[5]||'').trim(),
+        projeto: (cols[6]||'').trim(),
+        hrs_est: parseFloat(cols[7]) || 0,
+        hrs_real: parseFloat(cols[8]) || 0,
+        data_conc: (cols[9]||'').trim()
+      });
+    }
+    if (records.length > 0) {
+      ALL_RECORDS = records;
+      updateDashboard();
+      document.getElementById('syncStatus').textContent = `Atualizado - Gestão Online (${records.length} registros)`;
+    }
+  } catch(e) {
+    document.getElementById('syncStatus').textContent = 'Usando dados locais';
+  }
+  btn.textContent = 'Sincronizar';
+  btn.disabled = false;
+  setTimeout(() => document.getElementById('syncStatus').textContent = '', 4000);
+}
+
+// INIT
+updateDashboard();
+</script>
+</body>
+</html>
