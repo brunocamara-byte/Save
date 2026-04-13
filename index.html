@@ -102,14 +102,12 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 <script>
 const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vQlCkXGk6vGrXWeYi-2pojUhWcVjLNGoWMRbZviehNoxUBYNetws6VqK1fLMaHAELBCOKEuxGaWKYqG/pub?gid=1433017562&single=true&output=csv';
 let D=[
-{chamado:"#1001",assunto:"Ajuste no layout da pagina de parceiros",dt:"2026-03-05",status:"Concluida",equipe:"Matheus",projeto:"Geral - Grupo Save",he:4,hr:3.5,dc:"2026-03-10"},
-{chamado:"#1002",assunto:"Correcao de bug no formulario de cadastro",dt:"2026-03-06",status:"Concluida",equipe:"Felipe",projeto:"Geral - Grupo Save",he:2,hr:2,dc:"2026-03-08"},
-{chamado:"#1003",assunto:"Implementacao de dashboard de vendas parceiros",dt:"2026-03-07",status:"Execucao",equipe:"Daniel Torres",projeto:"Projetos Avulsos",he:20,hr:12,dc:""},
-{chamado:"#1004",assunto:"Melhorias no fluxo de emissao de certificado",dt:"2026-03-10",status:"Execucao",equipe:"Luan",projeto:"Geral - Grupo Save",he:8,hr:5,dc:""},
-{chamado:"#1005",assunto:"Integracao API parceiros com sistema interno",dt:"2026-03-12",status:"Bloqueada",equipe:"Renan Nunes",projeto:"Geral - Grupo Save",he:6,hr:0,dc:""},
-{chamado:"#1006",assunto:"Criacao de relatorio de comissoes automatico",dt:"2026-03-14",status:"Analise Tecnica",equipe:"Paulo",projeto:"Geral - Grupo Save",he:5,hr:0,dc:""},
-{chamado:"#1007",assunto:"Atualizacao da pagina institucional Save ID",dt:"2026-03-15",status:"Ag. Aprovacao Save",equipe:"Matheus",projeto:"Geral - Grupo Save",he:3,hr:0,dc:""},
-{chamado:"#1008",assunto:"Configuracao de ambiente de staging",dt:"2026-03-18",status:"Backlog",equipe:"Luanna",projeto:"Geral - Grupo Save",he:4,hr:0,dc:""}
+{chamado:"#8246",assunto:"Customizacao - Dashboard Gerencial - Grupo Save (Entrega dia 18/03/2026)",dt:"05/03/2026",status:"Execucao",equipe:"Luanna",projeto:"Projetos Avulsos",he:40,hr:40,dc:"25/03/2026"},
+{chamado:"#8524",assunto:"Customizacao GRUPO SAVE - Solicitacao de pacote de horas (Produtivo pre-pago)",dt:"17/03/2026",status:"Bloqueada",equipe:"Matheus",projeto:"Geral - Grupo Save",he:0,hr:0,dc:""},
+{chamado:"#8525",assunto:"Customizacao GRUPO SAVE - Solicitacao de pacote de horas (Botao Saldo)",dt:"17/03/2026",status:"Concluida",equipe:"Luanna",projeto:"Geral - Grupo Save",he:18,hr:18,dc:"27/03/2026"},
+{chamado:"#8701",assunto:"[GRUPO SAVE] Configuracao Atendimento Express",dt:"05/03/2026",status:"Concluida",equipe:"Matheus",projeto:"Projetos Avulsos",he:0,hr:0,dc:"10/04/2026"},
+{chamado:"#8702",assunto:"[GRUPO SAVE] Implantacao SoftHouse",dt:"25/03/2026",status:"Concluida",equipe:"Matheus",projeto:"Projetos Avulsos",he:0,hr:0,dc:"27/03/2026"},
+{chamado:"#8754",assunto:"[GRUPO SAVE] Disparos Whatsapp vendas nao pagas",dt:"27/03/2026",status:"Execucao",equipe:"Felipe",projeto:"Projetos Avulsos",he:0,hr:0,dc:""}
 ];
 const STG=[{k:"Backlog",l:"Backlog",c:"backlog"},{k:"Analise Tecnica",l:"Análise Técnica",c:"analise"},{k:"Ag. Aprovacao Save",l:"Ag. Aprovação",c:"aprovacao"},{k:"Execucao",l:"Execução",c:"execucao"},{k:"Bloqueada",l:"Bloqueada",c:"bloqueada"},{k:"Concluida",l:"Concluída",c:"concluida"}];
 const MN=["","Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
@@ -133,10 +131,25 @@ function parseCSV(t){
   return r;
 }
 
+
+function parseDate(s){
+  if(!s)return null;
+  s=s.trim();
+  // DD/MM/YYYY
+  let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m)return new Date(+m[3],+m[2]-1,+m[1]);
+  // YYYY-MM-DD
+  m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m)return new Date(+m[1],+m[2]-1,+m[3]);
+  // MM/DD/YYYY fallback
+  const d=new Date(s);
+  return isNaN(d)?null:d;
+}
+
 function gF(){
   const a=document.getElementById('fAno').value,p=document.getElementById('fProj').value,m=document.getElementById('fMes').value,q=document.getElementById('fSearch').value.toLowerCase().trim();
   if(!a)return[];
-  return D.filter(r=>{const d=new Date(r.dt);if(isNaN(d))return false;if(d.getFullYear()!==+a)return false;if(p!=='all'&&r.projeto!==p)return false;if(m!=='all'&&(d.getMonth()+1)!==+m)return false;if(q&&!r.chamado.toLowerCase().includes(q)&&!r.assunto.toLowerCase().includes(q))return false;return true});
+  return D.filter(r=>{const d=parseDate(r.dt);if(!d)return false;if(d.getFullYear()!==+a)return false;if(p!=='all'&&r.projeto!==p)return false;if(m!=='all'&&(d.getMonth()+1)!==+m)return false;if(q&&!r.chamado.toLowerCase().includes(q)&&!r.assunto.toLowerCase().includes(q))return false;return true});
 }
 
 function render(){
@@ -151,13 +164,13 @@ function render(){
   document.getElementById('kanbanGrid').innerHTML=STG.map(s=>{const it=f.filter(r=>r.status===s.k);return`<div class="kanban-col"><div class="kch bg-${s.c}">${s.l}<span class="cnt">${it.length}</span></div><div class="kcc">${it.length?it.map(r=>`<div class="kcard s-${s.c}"><div class="cc">${r.chamado}</div><div class="ca">${r.assunto}</div><div class="cm"><span>${r.projeto}</span><span>${r.equipe}</span></div>${r.he?`<div class="cm"><span>${r.he}h est.</span></div>`:''}</div>`).join(''):'<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:10px;font-style:italic">Nenhuma demanda</div>'}</div></div>`}).join('');
   // Pipeline
   const q=document.getElementById('fSearch').value.toLowerCase().trim();
-  document.getElementById('pipeBody').innerHTML=f.map(r=>{const hl=q&&(r.chamado.toLowerCase().includes(q)||r.assunto.toLowerCase().includes(q));const s=STG.find(s=>s.k===r.status);const dt=r.dt?new Date(r.dt).toLocaleDateString('pt-BR'):'-';return`<tr class="${hl?'hl':''}"><td><span style="font-family:'JetBrains Mono',monospace;font-weight:500;color:#1E3A5F">${r.chamado}</span></td><td>${dt}</td><td>${r.assunto}</td><td><span class="pill p-${s?s.c:'backlog'}">${r.status}</span></td><td>${r.projeto}</td><td style="text-align:center">${r.he||'-'}</td><td>${r.equipe}</td></tr>`}).join('');
+  document.getElementById('pipeBody').innerHTML=f.map(r=>{const hl=q&&(r.chamado.toLowerCase().includes(q)||r.assunto.toLowerCase().includes(q));const s=STG.find(s=>s.k===r.status);const dt=parseDate(r.dt)?parseDate(r.dt).toLocaleDateString('pt-BR'):'-';return`<tr class="${hl?'hl':''}"><td><span style="font-family:'JetBrains Mono',monospace;font-weight:500;color:#1E3A5F">${r.chamado}</span></td><td>${dt}</td><td>${r.assunto}</td><td><span class="pill p-${s?s.c:'backlog'}">${r.status}</span></td><td>${r.projeto}</td><td style="text-align:center">${r.he||'-'}</td><td>${r.equipe}</td></tr>`}).join('');
   // Relatórios
   const ano=a,mes=document.getElementById('fMes').value;
   const per=mes!=='all'?`${MN[+mes]} / ${ano}`:`Todos os meses / ${ano}`;
-  const aY=D.filter(r=>{const d=new Date(r.dt);return!isNaN(d)&&d.getFullYear()===+ano});
+  const aY=D.filter(r=>{const d=parseDate(r.dt);return d&&d.getFullYear()===+ano});
   const mo={};for(let m=1;m<=12;m++)mo[m]={d:0,h:0,c:0,b:0};
-  aY.forEach(r=>{const m=new Date(r.dt).getMonth()+1;mo[m].d++;mo[m].h+=(r.he||0);if(r.status==='Concluida')mo[m].c++;if(r.status==='Bloqueada')mo[m].b++});
+  aY.forEach(r=>{const m=parseDate(r.dt).getMonth()+1;mo[m].d++;mo[m].h+=(r.he||0);if(r.status==='Concluida')mo[m].c++;if(r.status==='Bloqueada')mo[m].b++});
   let mr='',td2=0,th2=0,tc2=0,tb2=0;
   for(let m=1;m<=12;m++){const v=mo[m];td2+=v.d;th2+=v.h;tc2+=v.c;tb2+=v.b;if(v.d>0)mr+=`<tr><td>${MN[m]}</td><td>${v.d}</td><td>${v.h}</td><td>${v.c}</td><td>${v.b}</td></tr>`}
   mr+=`<tr><td>Total</td><td>${td2}</td><td>${th2}</td><td>${tc2}</td><td>${tb2}</td></tr>`;
@@ -167,14 +180,14 @@ function render(){
   document.getElementById('relGrid').innerHTML=`<div class="rcard"><h3>Relatório por Projeto - ${per}</h3><table class="rtable"><thead><tr><th>Mês</th><th>Demandas</th><th>Horas</th><th>Concluídas</th><th>Bloqueadas</th></tr></thead><tbody>${mr}</tbody></table></div><div class="rcard"><h3>Comparativo por Projeto - ${ano}</h3><table class="rtable"><thead><tr><th>Projeto</th><th>Demandas</th><th>Horas</th><th>Concluídas</th></tr></thead><tbody>${pr}</tbody></table></div>`;
   // Faturamento
   const isM=mes!=='all';
-  const fat=D.filter(r=>{if(r.status!=='Concluida'||!r.dc)return false;const dc=new Date(r.dc);if(isNaN(dc))return false;if(dc.getFullYear()!==+ano)return false;if(isM&&(dc.getMonth()+1)!==+mes)return false;return true});
+  const fat=D.filter(r=>{if(r.status!=='Concluida'||!r.dc)return false;const dc=parseDate(r.dc);if(!dc)return false;if(dc.getFullYear()!==+ano)return false;if(isM&&(dc.getMonth()+1)!==+mes)return false;return true});
   const gI=fat.filter(r=>r.projeto==='Geral - Grupo Save'),aI=fat.filter(r=>r.projeto==='Projetos Avulsos');
   const gH=gI.reduce((s,r)=>s+(r.hr||r.he||0),0),aH=aI.reduce((s,r)=>s+(r.hr||r.he||0),0);
   let gc='';
   if(isM){const lim=40,rest=Math.max(0,lim-gH),exc=Math.max(0,gH-lim),pct=Math.min(100,(gH/lim)*100),bc=pct>=100?'#DC2626':pct>=80?'#D97706':'#059669';
     gc=`<div class="fcard fc-blue"><div class="fl">Demandas</div><div class="fv">${gI.length}</div></div><div class="fcard"><div class="fl">Contrato</div><div class="fv">40h</div></div><div class="fcard ${gH>lim?'fc-red':'fc-green'}"><div class="fl">Horas Faturadas</div><div class="fv">${gH}h</div><div class="pbar"><div class="fill" style="width:${pct}%;background:${bc}"></div></div></div>${exc>0?`<div class="fcard fc-red"><div class="fl">Acima do contrato de 40h</div><div class="fv">+${exc}h</div></div>`:`<div class="fcard fc-green"><div class="fl">Horas Restantes</div><div class="fv">${rest}h</div></div>`}`;
   }else{gc=`<div class="fcard fc-blue"><div class="fl">Demandas</div><div class="fv">${gI.length}</div></div><div class="fcard"><div class="fl">Contrato Mensal</div><div class="fv">40h</div></div><div class="fcard fc-blue"><div class="fl">Horas Faturadas</div><div class="fv">${gH}h</div><div class="fl" style="margin-top:3px">no período</div></div><div class="fcard"><div class="fl">Concluídas</div><div class="fv">${gI.length}</div></div>`}
-  const mkT=(it,full)=>it.length?`<table class="dtable" style="margin-top:10px"><thead><tr><th>Chamado</th><th>Assunto</th>${full?'<th>Projeto</th><th>Data Ticket</th>':''}<th>Data Conclusão</th><th>Horas Faturadas</th><th>Status</th></tr></thead><tbody>${it.map(r=>{const dt=r.dt?new Date(r.dt).toLocaleDateString('pt-BR'):'-';const dc=r.dc?new Date(r.dc).toLocaleDateString('pt-BR'):'-';return`<tr><td style="font-family:'JetBrains Mono',monospace;font-weight:500">${r.chamado}</td><td>${r.assunto}</td>${full?`<td>${r.projeto}</td><td>${dt}</td>`:''}<td style="color:#059669">${dc}</td><td style="text-align:center;color:#059669;font-weight:600">${r.hr||r.he||0}h</td><td><span class="pill p-concluida">Concluída</span></td></tr>`}).join('')}</tbody></table>`:'<p style="color:#94A3B8;font-size:12px;margin-top:10px">Nenhum chamado faturável neste período.</p>';
+  const mkT=(it,full)=>it.length?`<table class="dtable" style="margin-top:10px"><thead><tr><th>Chamado</th><th>Assunto</th>${full?'<th>Projeto</th><th>Data Ticket</th>':''}<th>Data Conclusão</th><th>Horas Faturadas</th><th>Status</th></tr></thead><tbody>${it.map(r=>{const dt=parseDate(r.dt)?parseDate(r.dt).toLocaleDateString('pt-BR'):'-';const dc=parseDate(r.dc)?parseDate(r.dc).toLocaleDateString('pt-BR'):'-';return`<tr><td style="font-family:'JetBrains Mono',monospace;font-weight:500">${r.chamado}</td><td>${r.assunto}</td>${full?`<td>${r.projeto}</td><td>${dt}</td>`:''}<td style="color:#059669">${dc}</td><td style="text-align:center;color:#059669;font-weight:600">${r.hr||r.he||0}h</td><td><span class="pill p-concluida">Concluída</span></td></tr>`}).join('')}</tbody></table>`:'<p style="color:#94A3B8;font-size:12px;margin-top:10px">Nenhum chamado faturável neste período.</p>';
   document.getElementById('fatContent').innerHTML=`<div class="fat-section"><div class="fat-title" style="color:#1E3A5F">Geral - Grupo Save (Contrato 40h/mês)</div><div class="fat-cards">${gc}</div>${mkT(gI,true)}</div><div class="fat-section"><div class="fat-title" style="color:#7C3AED">Projetos Avulsos (faturamento separado)</div><div class="fat-cards"><div class="fcard fc-blue"><div class="fl">Demandas</div><div class="fv">${aI.length}</div></div><div class="fcard"><div class="fl">Horas Faturadas</div><div class="fv">${aH}h</div></div></div>${mkT(aI,false)}</div>`;
 }
 
