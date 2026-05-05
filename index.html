@@ -129,12 +129,12 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 <script>
 const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vQlCkXGk6vGrXWeYi-2pojUhWcVjLNGoWMRbZviehNoxUBYNetws6VqK1fLMaHAELBCOKEuxGaWKYqG/pub?gid=1433017562&single=true&output=csv';
 let D=[
-{chamado:"#8246",assunto:"Customizacao - Dashboard Gerencial - Grupo Save (Entrega dia 18/03/2026)",dt:"05/03/2026",status:"Execucao",equipe:"Luanna",projeto:"Projetos Avulsos",he:40,hr:40,dc:"25/03/2026"},
-{chamado:"#8524",assunto:"Customizacao GRUPO SAVE - Solicitacao de pacote de horas (Produtivo pre-pago)",dt:"17/03/2026",status:"Bloqueada",equipe:"Matheus",projeto:"Geral - Grupo Save",he:0,hr:0,dc:""},
-{chamado:"#8525",assunto:"Customizacao GRUPO SAVE - Solicitacao de pacote de horas (Botao Saldo)",dt:"17/03/2026",status:"Concluida",equipe:"Luanna",projeto:"Geral - Grupo Save",he:18,hr:18,dc:"27/03/2026"},
-{chamado:"#8701",assunto:"[GRUPO SAVE] Configuracao Atendimento Express",dt:"05/03/2026",status:"Concluida",equipe:"Matheus",projeto:"Projetos Avulsos",he:0,hr:0,dc:"10/04/2026"},
-{chamado:"#8702",assunto:"[GRUPO SAVE] Implantacao SoftHouse",dt:"25/03/2026",status:"Concluida",equipe:"Matheus",projeto:"Projetos Avulsos",he:0,hr:0,dc:"27/03/2026"},
-{chamado:"#8754",assunto:"[GRUPO SAVE] Disparos Whatsapp vendas nao pagas",dt:"27/03/2026",status:"Execucao",equipe:"Felipe",projeto:"Projetos Avulsos",he:0,hr:0,dc:""}
+{chamado:"#8246",assunto:"Customizacao - Dashboard Gerencial - Grupo Save (Entrega dia 18/03/2026)",dt:"05/03/2026",status:"Execucao",equipe:"Luanna",projeto:"Projetos Avulsos",he:40,hr:40,dc:"25/03/2026",resumo:"Fazer a revisao dos contratos nas categorias (PI) Pre pago e (PA) pre pago. Verificar quais possuem valor limite cadastrado."},
+{chamado:"#8524",assunto:"Customizacao GRUPO SAVE - Solicitacao de pacote de horas (Produtivo pre-pago)",dt:"17/03/2026",status:"Bloqueada",equipe:"Matheus",projeto:"Geral - Grupo Save",he:0,hr:0,dc:"",resumo:"Solicitacao de pacote de horas para customizacao do modulo produtivo pre-pago. Aguardando definicao de escopo com cliente."},
+{chamado:"#8525",assunto:"Customizacao GRUPO SAVE - Solicitacao de pacote de horas (Botao Saldo)",dt:"17/03/2026",status:"Concluida",equipe:"Luanna",projeto:"Geral - Grupo Save",he:18,hr:18,dc:"27/03/2026",resumo:"Implementacao do botao de consulta de saldo no painel do cliente. Customizacao concluida e validada."},
+{chamado:"#8701",assunto:"[GRUPO SAVE] Configuracao Atendimento Express",dt:"05/03/2026",status:"Concluida",equipe:"Matheus",projeto:"Projetos Avulsos",he:0,hr:0,dc:"10/04/2026",resumo:"Configuracao do modulo de Atendimento Express conforme requisitos do Grupo Save."},
+{chamado:"#8702",assunto:"[GRUPO SAVE] Implantacao SoftHouse",dt:"25/03/2026",status:"Concluida",equipe:"Matheus",projeto:"Projetos Avulsos",he:0,hr:0,dc:"27/03/2026",resumo:"Implantacao do sistema SoftHouse no ambiente do Grupo Save."},
+{chamado:"#8754",assunto:"[GRUPO SAVE] Disparos Whatsapp vendas nao pagas",dt:"27/03/2026",status:"Execucao",equipe:"Felipe",projeto:"Projetos Avulsos",he:0,hr:0,dc:"",resumo:"Configuracao de disparos automaticos via WhatsApp para cobranca de vendas nao pagas."}
 ];
 const STG=[{k:"Backlog",l:"Backlog",c:"backlog"},{k:"Analise Tecnica",l:"Análise Técnica",c:"analise"},{k:"Ag. Aprovacao Save",l:"Ag. Aprovação",c:"aprovacao"},{k:"Execucao",l:"Execução",c:"execucao"},{k:"Bloqueada",l:"Bloqueada",c:"bloqueada"},{k:"Concluida",l:"Concluída",c:"concluida"}];
 const MN=["","Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
@@ -153,7 +153,7 @@ function parseCSV(t){
     if(c.length<7)continue;
     const ch=(c[1]||'').trim(),as=(c[2]||'').trim();
     if(!ch&&!as)continue;
-    r.push({chamado:ch,assunto:as,dt:(c[3]||'').trim(),status:(c[4]||'').trim(),equipe:(c[5]||'').trim(),projeto:(c[6]||'').trim(),he:parseFloat(c[7])||0,hr:parseFloat(c[8])||0,dc:(c[9]||'').trim()});
+    r.push({chamado:ch,assunto:as,dt:(c[3]||'').trim(),status:(c[4]||'').trim(),equipe:(c[5]||'').trim(),projeto:(c[6]||'').trim(),he:parseFloat(c[7])||0,hr:parseFloat(c[8])||0,dc:(c[9]||'').trim(),resumo:(c[10]||'').trim()});
   }
   return r;
 }
@@ -188,7 +188,7 @@ function render(){
   const kh=`<div class="kpi-card blue"><div class="kl">Total Demandas</div><div class="kv">${t}</div></div><div class="kpi-card green"><div class="kl">Concluídas</div><div class="kv">${co}</div></div><div class="kpi-card purple"><div class="kl">Em Execução</div><div class="kv">${ex}</div></div><div class="kpi-card red"><div class="kl">Bloqueadas</div><div class="kv">${bl}</div></div>`;
   ['kpi1','kpi2','kpi3'].forEach(i=>document.getElementById(i).innerHTML=kh);
   // Kanban
-  document.getElementById('kanbanGrid').innerHTML=STG.map(s=>{const it=f.filter(r=>r.status===s.k);return`<div class="kanban-col"><div class="kch bg-${s.c}">${s.l}<span class="cnt">${it.length}</span></div><div class="kcc">${it.length?it.map(r=>{const tip=`${r.chamado} - ${r.assunto} | ${r.projeto} | ${r.equipe}${r.he?' | '+r.he+'h est.':''}`;return`<div class="kcard s-${s.c}" data-tip="${tip.replace(/"/g,'&quot;')}" onclick='openCard(${JSON.stringify(r).replace(/'/g,"&#39;")})'><div class="cc">${r.chamado}</div><div class="ca">${r.assunto}</div><div class="cm"><span>${r.projeto}</span><span>${r.equipe}</span></div>${r.he?`<div class="cm"><span>${r.he}h est.</span></div>`:''}</div>`}).join(''):'<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:10px;font-style:italic">Nenhuma demanda</div>'}</div></div>`}).join('');
+  document.getElementById('kanbanGrid').innerHTML=STG.map(s=>{const it=f.filter(r=>r.status===s.k);return`<div class="kanban-col"><div class="kch bg-${s.c}">${s.l}<span class="cnt">${it.length}</span></div><div class="kcc">${it.length?it.map(r=>{const resumoPrev=r.resumo?(' | '+r.resumo.substring(0,120)+(r.resumo.length>120?'...':'')):'';const tip=`${r.chamado} - ${r.assunto} | ${r.projeto} | ${r.equipe}${r.he?' | '+r.he+'h est.':''}${resumoPrev}`;return`<div class="kcard s-${s.c}" data-tip="${tip.replace(/"/g,'&quot;')}" onclick='openCard(${JSON.stringify(r).replace(/'/g,"&#39;")})'><div class="cc">${r.chamado}</div><div class="ca">${r.assunto}</div><div class="cm"><span>${r.projeto}</span><span>${r.equipe}</span></div>${r.he?`<div class="cm"><span>${r.he}h est.</span></div>`:''}</div>`}).join(''):'<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:10px;font-style:italic">Nenhuma demanda</div>'}</div></div>`}).join('');
   // Pipeline
   const q=document.getElementById('fSearch').value.toLowerCase().trim();
   document.getElementById('pipeBody').innerHTML=f.map(r=>{const hl=q&&(r.chamado.toLowerCase().includes(q)||r.assunto.toLowerCase().includes(q));const s=STG.find(s=>s.k===r.status);const dt=parseDate(r.dt)?parseDate(r.dt).toLocaleDateString('pt-BR'):'-';return`<tr class="${hl?'hl':''}"><td><span style="font-family:'JetBrains Mono',monospace;font-weight:500;color:#1E3A5F">${r.chamado}</span></td><td>${dt}</td><td>${r.assunto}</td><td><span class="pill p-${s?s.c:'backlog'}">${r.status}</span></td><td>${r.projeto}</td><td style="text-align:center">${r.he||'-'}</td><td>${r.equipe}</td></tr>`}).join('');
@@ -231,6 +231,7 @@ function openCard(r){
   document.getElementById('modalBody').innerHTML=`
     <div class="modal-row"><span class="modal-label">Chamado</span><span class="modal-value" style="font-family:'JetBrains Mono',monospace;font-weight:600;color:#1E3A5F">${r.chamado}</span></div>
     <div class="modal-row"><span class="modal-label">Assunto</span><span class="modal-value">${r.assunto}</span></div>
+    ${r.resumo?`<div class="modal-divider"></div><div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px 16px;margin:8px 0"><div style="font-size:10px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">Resumo do Chamado</div><div style="font-size:13px;color:#0F172A;line-height:1.6">${r.resumo}</div></div>`:''}
     <div class="modal-divider"></div>
     <div class="modal-row"><span class="modal-label">Status</span><span class="modal-value"><span class="pill ${pillCls}">${statusLabel}</span></span></div>
     <div class="modal-row"><span class="modal-label">Projeto</span><span class="modal-value">${r.projeto}</span></div>
