@@ -140,22 +140,34 @@ const STG=[{k:"Backlog",l:"Backlog",c:"backlog"},{k:"Analise Tecnica",l:"Anális
 const MN=["","Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
 function parseCSV(t){
-  const lines=t.split('\n'),r=[];
+  // Split into records handling quoted fields with newlines
+  const records=[];
+  let cur='',inQ=false;
+  const lines=[];
+  for(let i=0;i<t.length;i++){
+    const ch=t[i];
+    if(ch==='"'){inQ=!inQ;cur+=ch}
+    else if(ch==='\n'&&!inQ){lines.push(cur);cur=''}
+    else if(ch==='\r'){}
+    else{cur+=ch}
+  }
+  if(cur.trim())lines.push(cur);
+  
   for(let i=1;i<lines.length;i++){
     const l=lines[i].trim();if(!l)continue;
-    const c=[];let cur='',q=false;
+    const c=[];let field='',q=false;
     for(let j=0;j<l.length;j++){
       const ch=l[j];
-      if(q){if(ch==='"'&&l[j+1]==='"'){cur+='"';j++}else if(ch==='"'){q=false}else{cur+=ch}}
-      else{if(ch==='"'){q=true}else if(ch===','){c.push(cur.trim());cur=''}else{cur+=ch}}
+      if(q){if(ch==='"'&&l[j+1]==='"'){field+='"';j++}else if(ch==='"'){q=false}else{field+=ch}}
+      else{if(ch==='"'){q=true}else if(ch===','){c.push(field.trim());field=''}else{field+=ch}}
     }
-    c.push(cur.trim());
+    c.push(field.trim());
     if(c.length<7)continue;
-    const ch=(c[1]||'').trim(),as=(c[2]||'').trim();
-    if(!ch&&!as)continue;
-    r.push({chamado:ch,assunto:as,dt:(c[3]||'').trim(),status:(c[4]||'').trim(),equipe:(c[5]||'').trim(),projeto:(c[6]||'').trim(),he:parseFloat(c[7])||0,hr:parseFloat(c[8])||0,dc:(c[9]||'').trim(),resumo:(c[10]||'').trim()});
+    const ch2=(c[1]||'').trim(),as=(c[2]||'').trim();
+    if(!ch2&&!as)continue;
+    records.push({chamado:ch2,assunto:as,dt:(c[3]||'').trim(),status:(c[4]||'').trim(),equipe:(c[5]||'').trim(),projeto:(c[6]||'').trim(),he:parseFloat(c[7])||0,hr:parseFloat(c[8])||0,dc:(c[9]||'').trim(),resumo:(c[10]||'').trim()});
   }
-  return r;
+  return records;
 }
 
 
@@ -231,7 +243,7 @@ function openCard(r){
   document.getElementById('modalBody').innerHTML=`
     <div class="modal-row"><span class="modal-label">Chamado</span><span class="modal-value" style="font-family:'JetBrains Mono',monospace;font-weight:600;color:#1E3A5F">${r.chamado}</span></div>
     <div class="modal-row"><span class="modal-label">Assunto</span><span class="modal-value">${r.assunto}</span></div>
-    ${r.resumo?`<div class="modal-divider"></div><div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px 16px;margin:8px 0"><div style="font-size:10px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">Resumo do Chamado</div><div style="font-size:13px;color:#0F172A;line-height:1.6">${r.resumo}</div></div>`:''}
+    ${r.resumo?`<div class="modal-divider"></div><div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px 16px;margin:8px 0;max-height:300px;overflow-y:auto"><div style="font-size:10px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">Resumo do Chamado</div><div style="font-size:13px;color:#0F172A;line-height:1.6;white-space:pre-line">${r.resumo}</div></div>`:''}
     <div class="modal-divider"></div>
     <div class="modal-row"><span class="modal-label">Status</span><span class="modal-value"><span class="pill ${pillCls}">${statusLabel}</span></span></div>
     <div class="modal-row"><span class="modal-label">Projeto</span><span class="modal-value">${r.projeto}</span></div>
