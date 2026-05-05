@@ -36,14 +36,14 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 .kpi-card.green{border-left:3px solid #059669}.kpi-card.blue{border-left:3px solid #2563EB}.kpi-card.red{border-left:3px solid #DC2626}.kpi-card.purple{border-left:3px solid #7C3AED}
 .kanban-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .kanban-col{display:flex;flex-direction:column;min-width:0}
-.kch{padding:8px;border-radius:6px 6px 0 0;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center;color:#FFF}
-.kch .cnt{background:rgba(255,255,255,.3);padding:1px 6px;border-radius:10px;font-size:9px}
-.kcc{padding:5px;background:#FFF;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 6px 6px;flex:1;min-height:260px}
-.kcard{padding:7px 8px;margin-bottom:5px;border-radius:5px;border-left:3px solid;overflow:hidden;transition:transform .15s,box-shadow .15s;cursor:default}
-.kcard:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(15,23,42,.06)}
-.kcard .cc{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500}
-.kcard .ca{font-size:9px;color:#475569;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kcard .cm{font-size:8px;color:#94A3B8;margin-top:2px;display:flex;justify-content:space-between;overflow:hidden}
+.kch{padding:9px 10px;border-radius:6px 6px 0 0;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center;color:#FFF}
+.kch .cnt{background:rgba(255,255,255,.3);padding:2px 7px;border-radius:10px;font-size:10px}
+.kcc{padding:8px;background:#FFF;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 6px 6px;flex:1;min-height:240px}
+.kcard{padding:10px 12px;margin-bottom:8px;border-radius:6px;border-left:3px solid;overflow:hidden;transition:transform .15s,box-shadow .15s;cursor:pointer}
+.kcard:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(15,23,42,.08)}
+.kcard .cc{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600}
+.kcard .ca{font-size:11px;color:#334155;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kcard .cm{font-size:10px;color:#64748B;margin-top:4px;display:flex;justify-content:space-between;overflow:hidden}
 .bg-backlog{background:#64748B}.bg-analise{background:#5B9BD5}.bg-aprovacao{background:#D97706}.bg-execucao{background:#2563EB}.bg-bloqueada{background:#DC2626}.bg-concluida{background:#059669}
 .s-backlog{background:#F8FAFC;border-color:#94A3B8}.s-backlog .cc{color:#64748B}
 .s-analise{background:#F0F7FF;border-color:#5B9BD5}.s-analise .cc{color:#5B9BD5}
@@ -76,6 +76,27 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 .info-blue{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF}
 .info-green{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46}
 .warning-box{background:#FFFBEB;border:1px solid #FDE68A;border-radius:6px;padding:12px 16px;font-size:12px;color:#92400E;text-align:center;margin-bottom:18px}
+/* CARD TOOLTIP */
+.kcard{position:relative}
+.kcard::after{content:attr(data-tip);position:absolute;left:0;right:0;top:100%;z-index:10;background:#1E293B;color:#FFF;padding:10px 12px;border-radius:6px;font-size:11px;line-height:1.5;opacity:0;pointer-events:none;transition:opacity .2s;white-space:normal;box-shadow:0 8px 24px rgba(15,23,42,.15);margin-top:4px}
+.kcard:hover::after{opacity:1}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.4);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#FFF;border-radius:12px;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(15,23,42,.15);overflow:hidden;animation:modalIn .25s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{padding:16px 20px;border-bottom:1px solid #E2E8F0;display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#1E3A5F}
+.modal-close{background:none;border:none;font-size:20px;color:#94A3B8;cursor:pointer;padding:4px 8px;border-radius:4px;transition:all .2s}
+.modal-close:hover{background:#F1F5F9;color:#0F172A}
+.modal-body{padding:20px}
+.modal-row{display:flex;margin-bottom:14px;gap:8px}
+.modal-label{font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.3px;min-width:100px;flex-shrink:0}
+.modal-value{font-size:13px;color:#0F172A;line-height:1.5}
+.modal-status{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.modal-divider{height:1px;background:#F1F5F9;margin:12px 0}
+
 .footer{text-align:center;padding:18px 24px;font-size:10px;color:#94A3B8;border-top:1px solid #E2E8F0;margin-top:32px}
 @media(max-width:1200px){.kanban-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.kcc{min-height:180px}}
 @media(max-width:900px){.kanban-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi-row{grid-template-columns:repeat(2,1fr)}.filters-bar{flex-direction:column;align-items:stretch;gap:8px}.fg{width:100%}.fg select,.fg input{flex:1;width:100%}.search-input{width:100%!important}.fat-cards{grid-template-columns:repeat(2,1fr)}.rel-grid{grid-template-columns:1fr}.header{padding:14px 16px}.header h1{font-size:15px}.content{padding:14px 16px}.nav-tabs{padding:0 16px;overflow-x:auto}.nav-tab{padding:10px 14px;white-space:nowrap;font-size:11px}}
@@ -97,6 +118,12 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 <div class="tab-content" id="tab-pipeline"><div class="kpi-row" id="kpi2"></div><div style="overflow-x:auto"><table class="dtable"><thead><tr><th>Chamado</th><th>Data</th><th>Assunto</th><th>Status</th><th>Projeto</th><th>Horas Estimadas</th><th>Equipe GO</th></tr></thead><tbody id="pipeBody"></tbody></table></div></div>
 <div class="tab-content" id="tab-relatorios"><div class="kpi-row" id="kpi3"></div><div class="rel-grid" id="relGrid"></div></div>
 <div class="tab-content" id="tab-faturamento"><div id="fatContent"></div><div class="info-box info-blue">As horas faturadas podem diferir das estimadas inicialmente. Durante a execução dos projetos, ajustes técnicos e mudanças na trajetória das demandas podem impactar o tempo real de entrega.</div><div class="info-box info-green">Horas não utilizadas no mês não acumulam para o período seguinte. Horas excedentes (acima de 40h) são faturadas separadamente conforme contrato.</div></div>
+</div>
+<div class="modal-overlay" id="cardModal" onclick="if(event.target===this)closeModal()">
+<div class="modal">
+<div class="modal-header"><h3 id="modalTitle"></h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+<div class="modal-body" id="modalBody"></div>
+</div>
 </div>
 <div class="footer">&copy; Gestão Online Soluções em TI LTDA. Todos os direitos reservados.</div>
 <script>
@@ -161,7 +188,7 @@ function render(){
   const kh=`<div class="kpi-card blue"><div class="kl">Total Demandas</div><div class="kv">${t}</div></div><div class="kpi-card green"><div class="kl">Concluídas</div><div class="kv">${co}</div></div><div class="kpi-card purple"><div class="kl">Em Execução</div><div class="kv">${ex}</div></div><div class="kpi-card red"><div class="kl">Bloqueadas</div><div class="kv">${bl}</div></div>`;
   ['kpi1','kpi2','kpi3'].forEach(i=>document.getElementById(i).innerHTML=kh);
   // Kanban
-  document.getElementById('kanbanGrid').innerHTML=STG.map(s=>{const it=f.filter(r=>r.status===s.k);return`<div class="kanban-col"><div class="kch bg-${s.c}">${s.l}<span class="cnt">${it.length}</span></div><div class="kcc">${it.length?it.map(r=>`<div class="kcard s-${s.c}"><div class="cc">${r.chamado}</div><div class="ca">${r.assunto}</div><div class="cm"><span>${r.projeto}</span><span>${r.equipe}</span></div>${r.he?`<div class="cm"><span>${r.he}h est.</span></div>`:''}</div>`).join(''):'<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:10px;font-style:italic">Nenhuma demanda</div>'}</div></div>`}).join('');
+  document.getElementById('kanbanGrid').innerHTML=STG.map(s=>{const it=f.filter(r=>r.status===s.k);return`<div class="kanban-col"><div class="kch bg-${s.c}">${s.l}<span class="cnt">${it.length}</span></div><div class="kcc">${it.length?it.map(r=>{const tip=`${r.chamado} - ${r.assunto} | ${r.projeto} | ${r.equipe}${r.he?' | '+r.he+'h est.':''}`;return`<div class="kcard s-${s.c}" data-tip="${tip.replace(/"/g,'&quot;')}" onclick='openCard(${JSON.stringify(r).replace(/'/g,"&#39;")})'><div class="cc">${r.chamado}</div><div class="ca">${r.assunto}</div><div class="cm"><span>${r.projeto}</span><span>${r.equipe}</span></div>${r.he?`<div class="cm"><span>${r.he}h est.</span></div>`:''}</div>`}).join(''):'<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:10px;font-style:italic">Nenhuma demanda</div>'}</div></div>`}).join('');
   // Pipeline
   const q=document.getElementById('fSearch').value.toLowerCase().trim();
   document.getElementById('pipeBody').innerHTML=f.map(r=>{const hl=q&&(r.chamado.toLowerCase().includes(q)||r.assunto.toLowerCase().includes(q));const s=STG.find(s=>s.k===r.status);const dt=parseDate(r.dt)?parseDate(r.dt).toLocaleDateString('pt-BR'):'-';return`<tr class="${hl?'hl':''}"><td><span style="font-family:'JetBrains Mono',monospace;font-weight:500;color:#1E3A5F">${r.chamado}</span></td><td>${dt}</td><td>${r.assunto}</td><td><span class="pill p-${s?s.c:'backlog'}">${r.status}</span></td><td>${r.projeto}</td><td style="text-align:center">${r.he||'-'}</td><td>${r.equipe}</td></tr>`}).join('');
@@ -193,6 +220,32 @@ function render(){
 
 function switchTab(t){document.querySelectorAll('.nav-tab').forEach(n=>n.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(n=>n.classList.remove('active'));document.querySelector(`[data-tab="${t}"]`).classList.add('active');document.getElementById(`tab-${t}`).classList.add('active')}
 function handleSearch(){const v=document.getElementById('fSearch').value.trim();if(v.length>0)switchTab('pipeline');render();document.getElementById('searchCount').textContent=v?`${gF().length} resultados`:''}
+
+function openCard(r){
+  const s=STG.find(s=>s.k===r.status);
+  const pillCls=s?'p-'+s.c:'p-backlog';
+  const statusLabel=s?s.l:r.status;
+  const dt=parseDate(r.dt)?parseDate(r.dt).toLocaleDateString('pt-BR'):'-';
+  const dc=r.dc&&parseDate(r.dc)?parseDate(r.dc).toLocaleDateString('pt-BR'):'Não preenchida';
+  document.getElementById('modalTitle').textContent=r.chamado+' - Detalhes';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="modal-row"><span class="modal-label">Chamado</span><span class="modal-value" style="font-family:'JetBrains Mono',monospace;font-weight:600;color:#1E3A5F">${r.chamado}</span></div>
+    <div class="modal-row"><span class="modal-label">Assunto</span><span class="modal-value">${r.assunto}</span></div>
+    <div class="modal-divider"></div>
+    <div class="modal-row"><span class="modal-label">Status</span><span class="modal-value"><span class="pill ${pillCls}">${statusLabel}</span></span></div>
+    <div class="modal-row"><span class="modal-label">Projeto</span><span class="modal-value">${r.projeto}</span></div>
+    <div class="modal-row"><span class="modal-label">Equipe GO</span><span class="modal-value">${r.equipe}</span></div>
+    <div class="modal-divider"></div>
+    <div class="modal-row"><span class="modal-label">Data Ticket</span><span class="modal-value">${dt}</span></div>
+    <div class="modal-row"><span class="modal-label">Data Conclusão</span><span class="modal-value" style="color:${r.dc&&parseDate(r.dc)?'#059669':'#94A3B8'}">${dc}</span></div>
+    <div class="modal-divider"></div>
+    <div class="modal-row"><span class="modal-label">Horas Est.</span><span class="modal-value" style="font-weight:600">${r.he?r.he+'h':'-'}</span></div>
+    <div class="modal-row"><span class="modal-label">Horas Reais</span><span class="modal-value" style="font-weight:600;color:#059669">${r.hr?r.hr+'h':'-'}</span></div>
+  `;
+  document.getElementById('cardModal').classList.add('open');
+}
+function closeModal(){document.getElementById('cardModal').classList.remove('open')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 
 async function syncData(){
   const btn=document.getElementById('btnSync');btn.textContent='Sincronizando...';btn.disabled=true;
