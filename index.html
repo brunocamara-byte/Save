@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Save ID - Painel Executivo de Projetos</title>
+<link rel="icon" type="image/webp" href="https://saveid.com.br/wp-content/uploads/2025/10/cropped-Icon2-300x300.webp">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -98,8 +99,9 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 .modal-divider{height:1px;background:#F1F5F9;margin:12px 0}
 
 /* LOGIN */
-.login-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#0F2A44 0%,#1E3A5F 50%,#2D5F8B 100%);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-overlay.hidden{display:none}
+.login-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#0F2A44 0%,#1E3A5F 50%,#2D5F8B 100%);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s ease,transform .6s ease}
+.login-overlay.hidden{opacity:0;transform:scale(1.02);pointer-events:none}
+.login-overlay.gone{display:none}
 .login-box{background:#FFF;border-radius:16px;padding:40px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
 .login-box h2{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:4px}
 .login-box .login-sub{font-size:12px;color:#94A3B8;margin-bottom:28px}
@@ -110,8 +112,15 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 .login-box .login-btn:disabled{opacity:.6;cursor:not-allowed}
 .login-box .login-error{color:#DC2626;font-size:12px;margin-top:10px;min-height:18px}
 .login-box .login-footer{font-size:10px;color:#94A3B8;margin-top:24px}
-.app-wrapper{display:none}
-.app-wrapper.visible{display:block}
+/* POLISH */
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,0.2)}50%{box-shadow:0 0 0 8px rgba(220,38,38,0)}}
+.kpi-pulse{animation:pulse 2s ease-in-out infinite}
+.greeting{font-size:11px;color:rgba(255,255,255,0.8);font-weight:500;margin-top:1px}
+.sync-time{font-size:9px;color:rgba(255,255,255,0.4);white-space:nowrap}
+@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.kpi-card .kv{animation:countUp .5s ease}
+.app-wrapper{display:none;opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease}
+.app-wrapper.visible{display:block;opacity:1;transform:translateY(0)}
 
 .footer{text-align:center;padding:18px 24px;font-size:10px;color:#94A3B8;border-top:1px solid #E2E8F0;margin-top:32px}
 @media(max-width:1200px){.kanban-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.kcc{min-height:180px}}
@@ -135,7 +144,7 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 </div>
 
 <div class="app-wrapper" id="appWrapper">
-<div class="header"><div style="display:flex;align-items:center;gap:14px"><img src="https://saveid.com.br/wp-content/uploads/2025/10/SaveID.svg" alt="Save ID" style="height:32px;filter:brightness(10)"><div><h1>Painel Executivo de Projetos</h1><p>Gestão estratégica de demandas e entregas - Gestão Online</p></div></div><div class="header-right"><span class="sync-status" id="syncStatus"></span><button class="btn-sync" id="btnSync" onclick="syncData()">Sincronizar</button><button class="btn-sync" onclick="doLogout()" style="background:rgba(220,38,38,0.15);border-color:rgba(220,38,38,0.3)">Sair</button></div></div>
+<div class="header"><div style="display:flex;align-items:center;gap:14px"><img src="https://saveid.com.br/wp-content/uploads/2025/10/SaveID.svg" alt="Save ID" style="height:32px;filter:brightness(10)"><div><h1>Painel Executivo de Projetos</h1><div class="greeting" id="greeting">Gestão estratégica de demandas e entregas</div></div></div><div class="header-right"><div style="text-align:right"><span class="sync-status" id="syncStatus"></span><div class="sync-time" id="syncTime"></div></div><button class="btn-sync" id="btnSync" onclick="syncData()">Sincronizar</button><button class="btn-sync" onclick="doLogout()" style="background:rgba(220,38,38,0.15);border-color:rgba(220,38,38,0.3)">Sair</button></div></div>
 <div class="filters-bar">
 <div class="fg"><label>Ano</label><select id="fAno" onchange="render()"><option value="">Selecione</option><option value="2026" selected>2026</option><option value="2027">2027</option></select></div>
 <div class="fg"><label>Projeto</label><select id="fProj" onchange="render()"><option value="all">Todos</option><option value="Geral - Grupo Save">Geral - Grupo Save</option><option value="Projetos Avulsos">Projetos Avulsos</option></select></div>
@@ -229,7 +238,7 @@ function render(){
   w.style.display='none';const f=gF();
   // KPIs
   const t=f.length,co=f.filter(r=>r.status==='Concluida').length,ex=f.filter(r=>r.status==='Execucao').length,bl=f.filter(r=>r.status==='Bloqueada').length;
-  const kh=`<div class="kpi-card blue"><div class="kl">Total Demandas</div><div class="kv">${t}</div></div><div class="kpi-card green"><div class="kl">Concluídas</div><div class="kv">${co}</div></div><div class="kpi-card purple"><div class="kl">Em Execução</div><div class="kv">${ex}</div></div><div class="kpi-card red"><div class="kl">Bloqueadas</div><div class="kv">${bl}</div></div>`;
+  const kh=`<div class="kpi-card blue"><div class="kl">Total Demandas</div><div class="kv" data-count="${t}">0</div></div><div class="kpi-card green"><div class="kl">Concluídas</div><div class="kv" data-count="${co}">0</div></div><div class="kpi-card purple"><div class="kl">Em Execução</div><div class="kv" data-count="${ex}">0</div></div><div class="kpi-card red ${bl>0?'kpi-pulse':''}"><div class="kl">Bloqueadas</div><div class="kv" data-count="${bl}">0</div></div>`;
   ['kpi1','kpi2','kpi3'].forEach(i=>document.getElementById(i).innerHTML=kh);
   // Kanban
   document.getElementById('kanbanGrid').innerHTML=STG.map(s=>{const it=f.filter(r=>r.status===s.k);return`<div class="kanban-col"><div class="kch bg-${s.c}">${s.l}<span class="cnt">${it.length}</span></div><div class="kcc">${it.length?it.map(r=>{const resumoPrev=r.resumo?(' | '+r.resumo.substring(0,120)+(r.resumo.length>120?'...':'')):'';const tip=`${r.chamado} - ${r.assunto} | ${r.projeto} | ${r.equipe}${r.he?' | '+r.he+'h est.':''}${resumoPrev}`;return`<div class="kcard s-${s.c}" data-tip="${tip.replace(/"/g,'&quot;')}" onclick='openCard(${JSON.stringify(r).replace(/'/g,"&#39;")})'><div class="cc">${r.chamado}</div><div class="ca">${r.assunto}</div><div class="cm"><span>${r.projeto}</span><span>${r.equipe}</span></div>${r.he?`<div class="cm"><span>${r.he}h est.</span></div>`:''}</div>`}).join(''):'<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:10px;font-style:italic">Nenhuma demanda</div>'}</div></div>`}).join('');
@@ -299,7 +308,7 @@ async function syncData(){
     if(!res.ok)throw new Error('HTTP '+res.status);
     const text=await res.text();
     const recs=parseCSV(text);
-    if(recs.length>0){D=recs;render();document.getElementById('syncStatus').textContent=`Atualizado - Gestão Online (${recs.length} registros)`}
+    if(recs.length>0){D=recs;render();updateSyncTime();setTimeout(animateCounters,200);document.getElementById('syncStatus').textContent=`Atualizado - Gestão Online (${recs.length} registros)`}
     else{document.getElementById('syncStatus').textContent='CSV vazio - dados locais'}
   }catch(e){console.error('Sync:',e);document.getElementById('syncStatus').textContent='Usando dados locais'}
   btn.textContent='Sincronizar';btn.disabled=false;
@@ -319,6 +328,64 @@ const USERS={
   'matheus.melo@gestao-online.com':'Matheus@GO2026'
 };
 
+// Counter animation
+function animateCounters(){
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target=parseInt(el.dataset.count);
+    if(isNaN(target)){el.textContent=target;return}
+    const duration=600;
+    const start=performance.now();
+    const step=(now)=>{
+      const elapsed=now-start;
+      const progress=Math.min(elapsed/duration,1);
+      const eased=1-Math.pow(1-progress,3);
+      el.textContent=Math.round(eased*target);
+      if(progress<1)requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+// Greeting
+const USER_NAMES={
+  'jairo@savecompany.com.br':'Jairo',
+  'vanessa.ignowski@savecompany.com.br':'Vanessa',
+  'salatiel.silva@savecompany.com.br':'Salatiel',
+  'bruno.camara@gestao-online.com':'Bruno',
+  'christian.vasconcelos@gestao-online.com':'Christian',
+  'daniel.torres@gestao-online.com':'Daniel',
+  'matheus.melo@gestao-online.com':'Matheus'
+};
+function updateGreeting(){
+  const email=sessionStorage.getItem('save_logged');
+  const name=USER_NAMES[email]||'';
+  const h=new Date().getHours();
+  const period=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
+  document.getElementById('greeting').textContent=name?`${period}, ${name}! - Gestão Online`:'Gestão estratégica de demandas e entregas';
+}
+
+// Timestamp
+function updateSyncTime(){
+  const now=new Date();
+  const h=String(now.getHours()).padStart(2,'0');
+  const m=String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('syncTime').textContent=`Última atualização: ${h}:${m}`;
+}
+
+// Smooth login transition
+function showApp(){
+  const login=document.getElementById('loginScreen');
+  const app=document.getElementById('appWrapper');
+  login.classList.add('hidden');
+  app.classList.add('visible');
+  setTimeout(()=>login.classList.add('gone'),700);
+  updateGreeting();
+  render();
+  syncData();
+  resetInact();
+  setTimeout(animateCounters,300);
+}
+
 function doLogin(){
   const email=document.getElementById('loginEmail').value.trim().toLowerCase();
   const pass=document.getElementById('loginPass').value;
@@ -330,10 +397,7 @@ function doLogin(){
     if(USERS[email]&&USERS[email]===pass){
       sessionStorage.setItem('save_logged',email);
       err.textContent='';
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('appWrapper').classList.add('visible');
-      render();
-      syncData();
+      showApp();
     }else{
       err.textContent='E-mail ou senha incorretos.';
     }
@@ -343,11 +407,16 @@ function doLogin(){
 
 function doLogout(){
   sessionStorage.removeItem('save_logged');
-  document.getElementById('loginScreen').classList.remove('hidden');
-  document.getElementById('appWrapper').classList.remove('visible');
+  const login=document.getElementById('loginScreen');
+  const app=document.getElementById('appWrapper');
+  app.classList.remove('visible');
+  login.classList.remove('gone');
+  setTimeout(()=>login.classList.remove('hidden'),50);
   document.getElementById('loginEmail').value='';
   document.getElementById('loginPass').value='';
   document.getElementById('loginError').textContent='';
+  document.getElementById('greeting').textContent='Gestão estratégica de demandas e entregas';
+  document.getElementById('syncTime').textContent='';
 }
 
 // Inactivity timeout - 15 min
@@ -357,11 +426,7 @@ function resetInact(){clearTimeout(_inactTimer);_inactTimer=setTimeout(()=>{if(s
 
 // INIT - check session
 if(sessionStorage.getItem('save_logged')){
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('appWrapper').classList.add('visible');
-  render();
-  syncData();
-  resetInact();
+  showApp();
 }
 </script>
 </body>
