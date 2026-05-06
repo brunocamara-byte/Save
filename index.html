@@ -44,20 +44,20 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 .kcard .cc{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600}
 .kcard .ca{font-size:11px;color:#334155;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kcard .cm{font-size:10px;color:#64748B;margin-top:4px;display:flex;justify-content:space-between;overflow:hidden}
-.bg-backlog{background:#64748B}.bg-analise{background:#5B9BD5}.bg-aprovacao{background:#D97706}.bg-execucao{background:#2563EB}.bg-bloqueada{background:#DC2626}.bg-concluida{background:#059669}
-.s-backlog{background:#F8FAFC;border-color:#94A3B8}.s-backlog .cc{color:#64748B}
-.s-analise{background:#F0F7FF;border-color:#5B9BD5}.s-analise .cc{color:#5B9BD5}
-.s-aprovacao{background:#FFFBEB;border-color:#D97706}.s-aprovacao .cc{color:#D97706}
-.s-execucao{background:#EFF6FF;border-color:#2563EB}.s-execucao .cc{color:#2563EB}
-.s-bloqueada{background:#FEF2F2;border-color:#DC2626}.s-bloqueada .cc{color:#DC2626}
-.s-concluida{background:#ECFDF5;border-color:#059669}.s-concluida .cc{color:#059669}
+.bg-backlog{background:#94A3B8}.bg-analise{background:#94A3B8}.bg-aprovacao{background:#94A3B8}.bg-execucao{background:#2563EB}.bg-bloqueada{background:#DC2626}.bg-concluida{background:#94A3B8}
+.s-backlog{background:#FAFAFA;border-color:#CBD5E1}.s-backlog .cc{color:#94A3B8}
+.s-analise{background:#FAFAFA;border-color:#CBD5E1}.s-analise .cc{color:#94A3B8}
+.s-aprovacao{background:#FAFAFA;border-color:#CBD5E1}.s-aprovacao .cc{color:#94A3B8}
+.s-execucao{background:#DBEAFE;border-color:#2563EB;box-shadow:0 0 0 1px rgba(37,99,235,0.1)}.s-execucao .cc{color:#1D4ED8}
+.s-bloqueada{background:#FEE2E2;border-color:#DC2626;box-shadow:0 0 0 1px rgba(220,38,38,0.1)}.s-bloqueada .cc{color:#B91C1C}
+.s-concluida{background:#FAFAFA;border-color:#CBD5E1}.s-concluida .cc{color:#94A3B8}
 .dtable{width:100%;border-collapse:collapse;background:#FFF;border-radius:8px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.04);border:1px solid #E2E8F0}
 .dtable thead th{background:#1E3A5F;color:#FFF;padding:10px 12px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;text-align:left;position:sticky;top:0;z-index:2}
 .dtable tbody td{padding:9px 12px;font-size:12px;border-bottom:1px solid #F1F5F9}
 .dtable tbody tr:hover{background:#FAFBFC}.dtable tbody tr.hl{background:#FFF9DB}
 .pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
-.p-backlog{background:#F8FAFC;color:#64748B}.p-analise{background:#E8F0FE;color:#4A6B8A}.p-aprovacao{background:#FFFBEB;color:#D97706}
-.p-execucao{background:#EFF6FF;color:#2563EB}.p-bloqueada{background:#FEF2F2;color:#DC2626}.p-concluida{background:#ECFDF5;color:#059669}
+.p-backlog{background:#F1F5F9;color:#94A3B8}.p-analise{background:#F1F5F9;color:#94A3B8}.p-aprovacao{background:#F1F5F9;color:#94A3B8}
+.p-execucao{background:#DBEAFE;color:#1D4ED8;font-weight:700}.p-bloqueada{background:#FEE2E2;color:#B91C1C;font-weight:700}.p-concluida{background:#F1F5F9;color:#94A3B8}
 .fat-section{margin-bottom:24px}
 .fat-title{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#0F172A;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #E2E8F0}
 .fat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
@@ -123,7 +123,8 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 
 <div class="login-overlay" id="loginScreen">
 <div class="login-box">
-<h2>Save ID</h2>
+<img src="https://saveid.com.br/wp-content/uploads/2025/10/SaveID.svg" alt="Save ID" style="height:36px;margin-bottom:12px">
+<h2>Painel Executivo</h2>
 <div class="login-sub">Painel Executivo de Projetos - Gestão Online</div>
 <input type="email" id="loginEmail" placeholder="E-mail" onkeydown="if(event.key==='Enter')doLogin()">
 <input type="password" id="loginPass" placeholder="Senha" onkeydown="if(event.key==='Enter')doLogin()">
@@ -134,7 +135,7 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 </div>
 
 <div class="app-wrapper" id="appWrapper">
-<div class="header"><div><h1>Save ID - Painel Executivo de Projetos</h1><p>Gestão estratégica de demandas e entregas - Gestão Online</p></div><div class="header-right"><span class="sync-status" id="syncStatus"></span><button class="btn-sync" id="btnSync" onclick="syncData()">Sincronizar</button><button class="btn-sync" onclick="doLogout()" style="background:rgba(220,38,38,0.15);border-color:rgba(220,38,38,0.3)">Sair</button></div></div>
+<div class="header"><div style="display:flex;align-items:center;gap:14px"><img src="https://saveid.com.br/wp-content/uploads/2025/10/SaveID.svg" alt="Save ID" style="height:32px;filter:brightness(10)"><div><h1>Painel Executivo de Projetos</h1><p>Gestão estratégica de demandas e entregas - Gestão Online</p></div></div><div class="header-right"><span class="sync-status" id="syncStatus"></span><button class="btn-sync" id="btnSync" onclick="syncData()">Sincronizar</button><button class="btn-sync" onclick="doLogout()" style="background:rgba(220,38,38,0.15);border-color:rgba(220,38,38,0.3)">Sair</button></div></div>
 <div class="filters-bar">
 <div class="fg"><label>Ano</label><select id="fAno" onchange="render()"><option value="">Selecione</option><option value="2026" selected>2026</option><option value="2027">2027</option></select></div>
 <div class="fg"><label>Projeto</label><select id="fProj" onchange="render()"><option value="all">Todos</option><option value="Geral - Grupo Save">Geral - Grupo Save</option><option value="Projetos Avulsos">Projetos Avulsos</option></select></div>
