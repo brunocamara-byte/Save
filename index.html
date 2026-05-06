@@ -97,6 +97,22 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 .modal-status{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
 .modal-divider{height:1px;background:#F1F5F9;margin:12px 0}
 
+/* LOGIN */
+.login-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#0F2A44 0%,#1E3A5F 50%,#2D5F8B 100%);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-overlay.hidden{display:none}
+.login-box{background:#FFF;border-radius:16px;padding:40px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+.login-box h2{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:4px}
+.login-box .login-sub{font-size:12px;color:#94A3B8;margin-bottom:28px}
+.login-box input{width:100%;padding:12px 16px;border:1px solid #E2E8F0;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#0F172A;outline:none;margin-bottom:14px;transition:border .2s}
+.login-box input:focus{border-color:#1E3A5F}
+.login-box .login-btn{width:100%;padding:12px;background:#1E3A5F;color:#FFF;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.login-box .login-btn:hover{background:#2D5F8B}
+.login-box .login-btn:disabled{opacity:.6;cursor:not-allowed}
+.login-box .login-error{color:#DC2626;font-size:12px;margin-top:10px;min-height:18px}
+.login-box .login-footer{font-size:10px;color:#94A3B8;margin-top:24px}
+.app-wrapper{display:none}
+.app-wrapper.visible{display:block}
+
 .footer{text-align:center;padding:18px 24px;font-size:10px;color:#94A3B8;border-top:1px solid #E2E8F0;margin-top:32px}
 @media(max-width:1200px){.kanban-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.kcc{min-height:180px}}
 @media(max-width:900px){.kanban-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi-row{grid-template-columns:repeat(2,1fr)}.filters-bar{flex-direction:column;align-items:stretch;gap:8px}.fg{width:100%}.fg select,.fg input{flex:1;width:100%}.search-input{width:100%!important}.fat-cards{grid-template-columns:repeat(2,1fr)}.rel-grid{grid-template-columns:1fr}.header{padding:14px 16px}.header h1{font-size:15px}.content{padding:14px 16px}.nav-tabs{padding:0 16px;overflow-x:auto}.nav-tab{padding:10px 14px;white-space:nowrap;font-size:11px}}
@@ -104,11 +120,25 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 </style>
 </head>
 <body>
-<div class="header"><div><h1>Save ID - Painel Executivo de Projetos</h1><p>Gestão estratégica de demandas e entregas - Gestão Online</p></div><div class="header-right"><span class="sync-status" id="syncStatus"></span><button class="btn-sync" id="btnSync" onclick="syncData()">Sincronizar</button></div></div>
+
+<div class="login-overlay" id="loginScreen">
+<div class="login-box">
+<h2>Save ID</h2>
+<div class="login-sub">Painel Executivo de Projetos - Gestão Online</div>
+<input type="email" id="loginEmail" placeholder="E-mail" onkeydown="if(event.key==='Enter')doLogin()">
+<input type="password" id="loginPass" placeholder="Senha" onkeydown="if(event.key==='Enter')doLogin()">
+<button class="login-btn" id="loginBtn" onclick="doLogin()">Entrar</button>
+<div class="login-error" id="loginError"></div>
+<div class="login-footer">&copy; Gestão Online Soluções em TI LTDA.</div>
+</div>
+</div>
+
+<div class="app-wrapper" id="appWrapper">
+<div class="header"><div><h1>Save ID - Painel Executivo de Projetos</h1><p>Gestão estratégica de demandas e entregas - Gestão Online</p></div><div class="header-right"><span class="sync-status" id="syncStatus"></span><button class="btn-sync" id="btnSync" onclick="syncData()">Sincronizar</button><button class="btn-sync" onclick="doLogout()" style="background:rgba(220,38,38,0.15);border-color:rgba(220,38,38,0.3)">Sair</button></div></div>
 <div class="filters-bar">
 <div class="fg"><label>Ano</label><select id="fAno" onchange="render()"><option value="">Selecione</option><option value="2026" selected>2026</option><option value="2027">2027</option></select></div>
 <div class="fg"><label>Projeto</label><select id="fProj" onchange="render()"><option value="all">Todos</option><option value="Geral - Grupo Save">Geral - Grupo Save</option><option value="Projetos Avulsos">Projetos Avulsos</option></select></div>
-<div class="fg"><label>Mês</label><select id="fMes" onchange="render()"><option value="all">Todos</option><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3" selected>Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
+<div class="fg"><label>Mês</label><select id="fMes" onchange="render()"><option value="all" selected>Todos</option><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
 <div class="fg"><label>Busca</label><input type="text" class="search-input" id="fSearch" placeholder="Chamado ou assunto..." oninput="handleSearch()"><span class="search-count" id="searchCount"></span></div>
 </div>
 <div class="nav-tabs"><div class="nav-tab active" data-tab="kanban" onclick="switchTab('kanban')">Kanban</div><div class="nav-tab" data-tab="pipeline" onclick="switchTab('pipeline')">Pipeline</div><div class="nav-tab" data-tab="relatorios" onclick="switchTab('relatorios')">Relatórios</div><div class="nav-tab" data-tab="faturamento" onclick="switchTab('faturamento')">Faturamento</div></div>
@@ -126,6 +156,7 @@ body{font-family:'DM Sans',sans-serif;background:#F5F6FA;color:#0F172A;min-heigh
 </div>
 </div>
 <div class="footer">&copy; Gestão Online Soluções em TI LTDA. Todos os direitos reservados.</div>
+</div><!-- end app-wrapper -->
 <script>
 const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vQlCkXGk6vGrXWeYi-2pojUhWcVjLNGoWMRbZviehNoxUBYNetws6VqK1fLMaHAELBCOKEuxGaWKYqG/pub?gid=1433017562&single=true&output=csv';
 let D=[
@@ -274,8 +305,63 @@ async function syncData(){
   setTimeout(()=>document.getElementById('syncStatus').textContent='',4000);
 }
 
-render();
-syncData();
+// ============================================================
+// AUTH
+// ============================================================
+const USERS={
+  'jairo@savecompany.com.br':'Jairo@Save2026',
+  'vanessa.ignowski@savecompany.com.br':'Vanessa@Save2026',
+  'salatiel.silva@savecompany.com.br':'Salatiel@Save2026',
+  'bruno.camara@gestao-online.com':'Bruno@GO2026',
+  'christian.vasconcelos@gestao-online.com':'Christian@GO2026',
+  'daniel.torres@gestao-online.com':'Daniel@GO2026',
+  'matheus.melo@gestao-online.com':'Matheus@GO2026'
+};
+
+function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginError');
+  const btn=document.getElementById('loginBtn');
+  if(!email||!pass){err.textContent='Preencha e-mail e senha.';return}
+  btn.textContent='Carregando...';btn.disabled=true;
+  setTimeout(()=>{
+    if(USERS[email]&&USERS[email]===pass){
+      sessionStorage.setItem('save_logged',email);
+      err.textContent='';
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('appWrapper').classList.add('visible');
+      render();
+      syncData();
+    }else{
+      err.textContent='E-mail ou senha incorretos.';
+    }
+    btn.textContent='Entrar';btn.disabled=false;
+  },800);
+}
+
+function doLogout(){
+  sessionStorage.removeItem('save_logged');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('appWrapper').classList.remove('visible');
+  document.getElementById('loginEmail').value='';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginError').textContent='';
+}
+
+// Inactivity timeout - 15 min
+let _inactTimer;
+function resetInact(){clearTimeout(_inactTimer);_inactTimer=setTimeout(()=>{if(sessionStorage.getItem('save_logged'))doLogout()},15*60*1000)}
+['click','mousemove','keydown','scroll','touchstart'].forEach(e=>document.addEventListener(e,resetInact));
+
+// INIT - check session
+if(sessionStorage.getItem('save_logged')){
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appWrapper').classList.add('visible');
+  render();
+  syncData();
+  resetInact();
+}
 </script>
 </body>
 </html>
